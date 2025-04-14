@@ -2,7 +2,7 @@ name: Track Issues and PRs
 
 on:
   issues:
-    types: [opened, edited, closed, labeled, unlabeled]
+    types: [opened]
   
 
 jobs:
