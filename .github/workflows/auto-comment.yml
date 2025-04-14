@@ -1,27 +1,30 @@
-name: Auto Comment on Issue or PR Open
+name: Track Issues and PRs
 
 on:
   issues:
-    types: [opened]
+    types: [opened, edited, closed, labeled, unlabeled]
   pull_request:
-    types: [opened]
+    types: [opened, edited, closed, reopened, labeled]
 
 jobs:
-  add_comment:
+  log_event:
     runs-on: ubuntu-latest
     steps:
-      - name: Add a comment
+      - name: Log GitHub Event Info
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Action: ${{ github.event.action }}"
+          echo "Issue/PR title: ${{ github.event.issue.title || github.event.pull_request.title }}"
+          echo "User: ${{ github.actor }}"
+
+      - name: Comment on new issue
+        if: github.event_name == 'issues' && github.event.action == 'opened'
         uses: actions/github-script@v7
         with:
           script: |
-            const issueOrPR = context.payload.issue || context.payload.pull_request;
-            const number = issueOrPR.number;
-            const type = context.payload.issue ? 'issue' : 'pull request';
-            const message = `👋 Thanks for opening this ${type}! We’ll take a look soon.`;
-
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: number,
-              body: message,
+              issue_number: context.payload.issue.number,
+              body: '👋 Thanks for opening this issue! We’ll take a look as soon as possible.',
             });
