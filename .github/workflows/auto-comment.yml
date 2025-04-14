@@ -5,6 +5,10 @@ on:
     types: [opened, edited, closed, labeled, unlabeled]
   pull_request:
     types: [opened, edited, closed, reopened, labeled]
+    
+permissions:
+  issues: write
+  pull-requests: write   
 
 jobs:
   log_event:
