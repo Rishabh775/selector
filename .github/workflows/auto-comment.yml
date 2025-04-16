@@ -6,29 +6,33 @@ on:
   pull_request:
     types: [opened]
 
+permissions:
+  issues: write
+  pull-requests: write
+
 jobs:
-  comment:
+  issue_comment:
     runs-on: ubuntu-latest
     steps:
-      - name: Comment on new issue
-        uses: actions/github-script@v7
+      - uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.createComment({
-            owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: 'Hi thanks for reporting'
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: '📝 Thanks for opening an issue!'
             });
 
-      - name: Comment on new pull Request
-        uses: actions/github-script@v7
+  pr_comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
         with:
           script: |
-            github.rest.pull_request.createComment({
-            owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
-                body: `👋 Thanks for opening this pull request! We’ll take a look soon.`
-            });     
-  
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: '🚀 Thanks for the pull request!'
+            });
